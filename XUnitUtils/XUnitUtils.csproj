@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net7.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Title>xUnit Utilities</Title>
+	<Authors>Andrew Pratt</Authors>
+	<Description>General utilities for xUnit.net.</Description>
+	<PackageProjectUrl>https://github.com/AndrewPratt0x40/XUnitUtils</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/AndrewPratt0x40/XUnitUtils</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	<IsTestProject>False</IsTestProject>
+	<PackageReadmeFile>readme.md</PackageReadmeFile>
+	<PackageLicenseFile>license.txt</PackageLicenseFile>
+	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	<Version>1.0.0-alpha.0</Version>
+	<PackageTags>xunit; tdd; bdd; test;</PackageTags>
+	<Copyright>Copyright (c) Andrew Pratt 2023</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<ProjectCapability Remove="TestProject" />
+	</ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="xunit.core" Version="2.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Update="license.txt">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <Pack>True</Pack>
+	  <PackagePath>\</PackagePath>
+	</None>
+	<None Update="readme.md">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<Pack>True</Pack>
+		<PackagePath>\</PackagePath>
+	</None>
+	<None Update="TheoryData\UtilsForIEnumerable_ToTheoryData.tt">
+	  <Generator>TextTemplatingFileGenerator</Generator>
+	  <LastGenOutput>UtilsForIEnumerable_ToTheoryData.cs</LastGenOutput>
+	</None>
+  </ItemGroup>
+
+  <ItemGroup>
+	<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Compile Update="TheoryData\UtilsForIEnumerable_ToTheoryData.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>UtilsForIEnumerable_ToTheoryData.tt</DependentUpon>
+	</Compile>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,208 @@
+<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+#nullable enable
+#>
+// AUTO-GENERATED FILE
+// DO NOT MODIFY
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using FluentAssertions;
+using XUnitUtils.TheoryData;
+
+namespace XUnitUtilsTests.Tests
+{
+	public class TestsFor_UtilsForIEnumerable_ToTheoryData
+	{
+		#region Generic method wrappers
+
+<#
+for (int numOfArgs = 2; numOfArgs <= MaxTypeArgs; numOfArgs++)
+{
+#>
+		public static object? Invoke_ToTheoryData_With<#=numOfArgs#>Params(<#=StringFromNums(1, numOfArgs, n => $"Type T{n}")#>, object collection) =>
+			typeof(UtilsForIEnumerable)
+			.GetMethods()
+			.First
+			(
+				methodInfo =>
+					methodInfo.Name == nameof(UtilsForIEnumerable.ToTheoryData)
+					&& methodInfo.GetGenericArguments().Length == <#=numOfArgs#>
+			)
+			.MakeGenericMethod(<#=StringFromNums(1, numOfArgs, n => $"T{n}")#>)
+			.Invoke(null, new object?[] { collection })
+		;
+<#
+}
+#>
+
+		#endregion
+
+
+		#region Theory data
+
+<#
+for (int numOfArgs = 2; numOfArgs <= MaxTypeArgs; numOfArgs++)
+{
+#>
+		public static TheoryData<IEnumerable<Type>, object, IEnumerable<object?[]>> TheoryDataFor_ToTheoryData_With<#=numOfArgs#>Params
+		{
+			get
+			{
+				TheoryData<IEnumerable<Type>, object, IEnumerable<object?[]>> theoryData = new();
+
+				foreach (TestsFor_UtilsForIEnumerable.TheoryDataItemFor_ToTheoryData item in TestsFor_UtilsForIEnumerable.TheoryDataItemsFor_ToTheoryData)
+				{
+<#
+	if (numOfArgs <= MaxTypeArgsOfTupleBeforeTRest)
+	{
+#>
+					Type collectionItemType = typeof(ValueTuple<<#=RepeatString(numOfArgs - 1, ",")#>>).MakeGenericType(<#=StringFromNums(0, numOfArgs - 1, n => $"item.TupleTypes.ElementAt({n})")#>);
+<#
+	}
+	else
+	{
+#>
+					Type innerTupleType = typeof(ValueTuple<<#=RepeatString(numOfArgs - MaxTypeArgsOfTupleBeforeTRest - 1, ",")#>>).MakeGenericType(<#=StringFromNums(MaxTypeArgsOfTupleBeforeTRest, numOfArgs - 1, n => $"item.TupleTypes.ElementAt({n})")#>);
+					Type collectionItemType = typeof(ValueTuple<<#=RepeatString(MaxTypeArgsOfTupleBeforeTRest, ",")#>>).MakeGenericType(<#=StringFromNums(0, MaxTypeArgsOfTupleBeforeTRest - 1, n => $"item.TupleTypes.ElementAt({n})")#>, innerTupleType);
+<#
+	}
+#>
+					Type collectionType = typeof(List<>).MakeGenericType(collectionItemType);
+
+					object collection = Activator.CreateInstance(collectionType)!;
+					
+					object createCollectionItem(ITuple tuple)
+					{
+						object collectionItem = Activator.CreateInstance(collectionItemType)!;
+
+<#
+	for (int i = 0; i < Math.Min(numOfArgs, MaxTypeArgsOfTupleBeforeTRest); i++)
+	{
+#>
+						collectionItemType.GetField("Item<#=i + 1#>")!.SetValue(collectionItem, tuple[<#=i#>]);
+<#
+	}
+	if (numOfArgs > MaxTypeArgsOfTupleBeforeTRest)
+	{
+#>
+
+						object collectionItemRest = collectionItemType.GetField("Rest")!.GetValue(collectionItem)!;
+<#
+		for (int i = MaxTypeArgsOfTupleBeforeTRest; i < numOfArgs; i++)
+		{
+#>
+						innerTupleType.GetField("Item<#=i - MaxTypeArgsOfTupleBeforeTRest + 1#>")!.SetValue(collectionItemRest, tuple[<#=i#>]);
+<#
+		}
+	}
+#>
+
+						return collectionItem;
+					}
+					
+					void addToCollection(object? value) =>
+						collectionType.GetMethod("Add")!.Invoke(collection, new object?[] { value })
+					;
+
+					foreach (ITuple tuple in item.Tuples)
+						addToCollection(createCollectionItem(tuple));
+
+					IEnumerable<object?[]> expectedResult =
+						from tuple in ((IEnumerable)collection).Cast<ITuple>()
+						select new object?[] { <#=StringFromNums(0, numOfArgs - 1, n => $"tuple[{n}]")#> }
+					;
+
+					theoryData.Add(item.TupleTypes.Take(<#=numOfArgs#>), collection, expectedResult);
+				}
+
+				return theoryData;
+			}
+		}
+
+
+<#
+}
+#>
+		#endregion
+
+
+		#region Tests
+
+<#
+for (int numOfArgs = 2; numOfArgs <= MaxTypeArgs; numOfArgs++)
+{
+#>
+		[Theory]
+		[MemberData(nameof(TheoryDataFor_ToTheoryData_With<#=numOfArgs#>Params))]
+		public void ToTheoryData_With<#=numOfArgs#>Params_returns_expected_value(IEnumerable<Type> types, object collection, IEnumerable<object?[]> expectedResult)
+		{
+			// Arrange
+			object? returnValue;
+			IEnumerable<object[]>? returnValueAsEnumerableOfArrays;
+			Type expectedReturnType = typeof(TheoryData<<#=RepeatString(numOfArgs - 1, ",")#>>).MakeGenericType(<#=StringFromNums(0, numOfArgs - 1, n => $"types.ElementAt({n})")#>);
+
+			// Act
+			returnValue = Invoke_ToTheoryData_With<#=numOfArgs#>Params(<#=StringFromNums(0, numOfArgs - 1, n => $"types.ElementAt({n})")#>, collection);
+
+			// Assert
+			returnValue.Should().BeOfType
+			(
+				expectedReturnType,
+				$"invoking {nameof(UtilsForIEnumerable.ToTheoryData)} with type parameters [{string.Join(", ", from type in types select type.Name)}] should return an instance of type {expectedReturnType.Name}"
+			);
+			returnValueAsEnumerableOfArrays = returnValue as IEnumerable<object[]>;
+			returnValueAsEnumerableOfArrays.Should().NotBeNull
+			(
+				$"invoking {nameof(UtilsForIEnumerable.ToTheoryData)} should return a value that is convertible to {nameof(IEnumerable<object[]>)}"
+			);
+
+			returnValueAsEnumerableOfArrays.Should().AllSatisfy
+			(
+				theoryDataRow => theoryDataRow.Length.Should().Be(<#=numOfArgs#>, "Each row should only contain <#=numOfArgs#> items")
+			);
+
+			returnValueAsEnumerableOfArrays.Should().BeEquivalentTo(expectedResult);
+		}
+
+
+<#
+}
+#>
+		#endregion
+	}
+}
+<#
+#nullable restore
+#>
+<#+
+#nullable enable
+
+public int MaxTypeArgs => 10;
+public int MaxTypeArgsOfTupleBeforeTRest => 7;
+
+public string StringFromNums(int start, int end, Func<int, string> perNumFunc, string? seperator = ", ") =>
+	string.Join
+	(
+		seperator ?? string.Empty,
+		from num in Enumerable.Range(start, end - start + 1) select perNumFunc(num)
+	)
+;
+
+public string RepeatString(int count, string str, string? seperator = null) =>
+	StringFromNums(1, count, _ => str, seperator)
+;
+
+#nullable restore
+#>
