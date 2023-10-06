@@ -12,6 +12,7 @@ using FluentAssertions;
 using XUnitUtils.Exceptions;
 using XUnitUtils.TheoryData;
 using XUnitUtils.TheoryData.ItemGenerators;
+using static XUnitUtilsTests.Tests.TestsFor_NumericGenerator;
 
 namespace XUnitUtilsTests.Tests
 {
